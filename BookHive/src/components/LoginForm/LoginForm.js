@@ -11,8 +11,6 @@ const LoginForm = () => {
 
   // Mock credentials
   const mockUsers = [
-    { email: 'user@example.com', password: 'password123' },
-    { email: 'admin@example.com', password: 'admin123' },
     { email: 'test@test.com', password: 'test123' }
   ];
 
@@ -23,7 +21,7 @@ const LoginForm = () => {
 
     if (user) {
       setError('');
-      navigation.navigate('Home');
+      navigation.navigate('HomePage');
     } else {
       setError('Invalid credentials. Try one of these test accounts:');
     }

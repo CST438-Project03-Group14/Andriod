@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   registerLink: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#070707',
+    color: '#ffff',
     marginTop: 20,
   },
   linkText: {

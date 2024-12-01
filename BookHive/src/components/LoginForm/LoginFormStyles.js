@@ -2,11 +2,11 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: '90%',
+    width: 420, 
     backgroundColor: 'transparent',
     borderColor: 'rgba(255, 255, 255, 0.2)',
     borderWidth: 2,
-    borderRadius: 12,
+    borderRadius: 12, 
     paddingVertical: 30,
     paddingHorizontal: 40,
     alignItems: 'center',
@@ -14,11 +14,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 15,
+    shadowRadius: 15, 
     margin: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 28, 
     fontWeight: '700',
     marginBottom: 25,
     textAlign: 'center',
@@ -37,15 +37,22 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.3)',
     borderWidth: 2,
     borderRadius: 40,
-    color: 'rgb(233, 29, 29)',
+    color: 'rgb(255, 255, 255)', // White text
     paddingHorizontal: 15,
     fontSize: 16,
+    shadowColor: 'rgba(79, 115, 241, 0.6)',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.0, 
+    transition: 'border-color 0.3s ease, box-shadow 0.3s ease', 
   },
-  iconPlaceholder: { // Replaces the icon style when not using FontAwesome
+  placeholderTextColor: {
+    color: 'rgba(255, 255, 255, 0.7)', // Semi-transparent white
+  },
+  iconPlaceholder: {
     position: 'absolute',
     right: 20,
     top: '50%',
-    transform: [{ translateY: -10 }],
+    transform: [{ translateY: -12 }],
     fontSize: 18,
     color: '#0b0b0b',
   },
@@ -61,6 +68,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 10,
     marginTop: 10,
+    transition: 'background-color 0.3s ease', 
   },
   buttonText: {
     color: 'rgb(18, 16, 16)',
@@ -74,8 +82,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   linkText: {
-    color: 'rgb(21, 20, 20)',
+    color: 'rgb(255, 255, 255)',
     fontWeight: '600',
+    textDecorationLine: 'underline', 
   },
   errorContainer: {
     backgroundColor: '#f8d7da',

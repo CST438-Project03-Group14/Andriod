@@ -70,9 +70,9 @@ const LoginForm = () => {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <View style={styles.registerLink}>
-          <Text>
+          <Text style={styles.registerLink}>
             Don't have an account?{' '}
-            <Text style={styles.linkText} onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.linkText} onPress={() => navigation.navigate('SignupForm')}>
               Sign up
             </Text>
           </Text>

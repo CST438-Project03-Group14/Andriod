@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import LoginForm from './src/components/LoginForm/LoginForm'; 
 import HomePage from './src/components/HomePage/HomePage';
 import SignupForm from './src/components/SignUpForm/SignUpForm';
+import LibraryPage from './src/components/LibraryPage/LibraryPage';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,11 @@ const App = () => {
         name="SignupForm"
         component={SignupForm}
         options={{ title: 'Create Account'}} 
+        />
+         <Stack.Screen
+        name="LibraryPage"
+        component={LibraryPage}
+        options={{ title: 'Library Catalog'}} 
         />
       </Stack.Navigator>
     </NavigationContainer>

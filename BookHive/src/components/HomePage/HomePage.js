@@ -13,7 +13,7 @@ const HomePage = () => {
   };
 
   const goToLibrary = () => {
-    navigation.navigate('Library'); // Navigate to Library screen
+    navigation.navigate('LibraryPage'); // Navigate to Library screen
   };
 
   return (

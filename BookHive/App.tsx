@@ -5,6 +5,7 @@ import LoginForm from './src/components/LoginForm/LoginForm';
 import HomePage from './src/components/HomePage/HomePage';
 import SignupForm from './src/components/SignUpForm/SignUpForm';
 import LibraryPage from './src/components/LibraryPage/LibraryPage';
+import FavoritesPage from './src/components/Favorites/FavoritesPage';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,11 @@ const App = () => {
         name="LibraryPage"
         component={LibraryPage}
         options={{ title: 'Library Catalog'}} 
+        />
+         <Stack.Screen
+        name="FavoritesPage"
+        component={FavoritesPage}
+        options={{ title: 'Favorites'}} 
         />
       </Stack.Navigator>
     </NavigationContainer>

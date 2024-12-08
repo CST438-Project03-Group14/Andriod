@@ -1,73 +1,156 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import styles from './LibraryPageStyles'; // Import styles
-import ScreenBackground from '../BackgroundImage/ScreenBackground'; // Import the background
+import React, { useState, useEffect } from 'react';
+import {View, Text, FlatList, Image, TouchableOpacity, ActivityIndicator, ImageBackground, ScrollView,} from 'react-native';
+import styles from './LibraryPageStyles';
 
+const Library = ({ navigation }) => {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedGenre, setSelectedGenre] = useState(null);
 
-const LibraryPage = ({ navigation }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  useEffect(() => {
+    fetchAllBooks();
+  }, []);
 
-  const books = [
-    { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Classic' },
-    { id: 2, title: '1984', author: 'George Orwell', genre: 'Science Fiction' },
-    { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance' },
-    { id: 4, title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy' },
-    { id: 5, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction' },
-  ];
+  const fetchAllBooks = async () => {
+    try {
+      setSelectedGenre(null); 
+      const response = await fetch(
+        'https://bookhive-90e4e8826675.herokuapp.com/api/books/'
+      );
+      if (!response.ok) {
+        throw new Error('Failed to fetch books');
+      }
+      const data = await response.json();
+      setBooks(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
-  const filteredBooks = books.filter(
-    (book) =>
-      book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleGenreSelect = async (genre) => {
+    setLoading(true);
+    setSelectedGenre(genre);
+    try {
+      const response = await fetch(
+        `https://bookhive-90e4e8826675.herokuapp.com/api/books/search/?q=${genre}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setBooks(data);
+        setError(null);
+      } else {
+        throw new Error('Failed to fetch books for the selected genre');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200EE" />
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScreenBackground>
-      <View style={styles.wrapper}>
-        {/* Header */}
+    <ImageBackground
+      source={require('../BackgroundImage/Library.jpg')} 
+      style={styles.backgroundImage}
+    >
+      <View style={styles.contentContainer}>
         <View style={styles.header}>
-          <Text style={styles.title}>Library Catalog</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('HomePage')}
-            style={styles.backButton}
+          <Text style={styles.title}>Library Collection</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.genreButtonsContainer}
           >
-            <Text style={styles.backButtonText}>Back to Home</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.genreButton,
+                selectedGenre === null && styles.activeGenreButton,
+              ]}
+              onPress={fetchAllBooks}
+            >
+              <Text style={styles.genreButtonText}>All Books</Text>
+            </TouchableOpacity>
+            {['Classic', 'Non-Fiction', 'Fantasy'].map(
+              (genre) => (
+                <TouchableOpacity
+                  key={genre}
+                  style={[
+                    styles.genreButton,
+                    selectedGenre === genre && styles.activeGenreButton,
+                  ]}
+                  onPress={() => handleGenreSelect(genre)}
+                >
+                  <Text style={styles.genreButtonText}>{genre}</Text>
+                </TouchableOpacity>
+              )
+            )}
+          </ScrollView>
         </View>
 
-        {/* Search Bar */}
-        <View style={styles.searchBar}>
-          <TextInput
-            style={styles.searchInput}
-            placeholderTextColor={styles.placeholderTextColor.color}
-            placeholder="Search books by title or author..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-
-        {/* Book List */}
         <FlatList
-          data={filteredBooks}
-          keyExtractor={(item) => item.id.toString()}
+          data={books}
+          keyExtractor={(item) => item.book_id.toString()}
           renderItem={({ item }) => (
             <View style={styles.bookCard}>
-              <View style={styles.bookCover} />
+              <View style={styles.bookCover}>
+                {item.cover_image ? (
+                  <Image
+                    source={{ uri: item.cover_image }}
+                    style={styles.coverImage}
+                  />
+                ) : (
+                  <View style={styles.defaultCover}>
+                    <Text style={styles.defaultCoverText}>
+                      {item.title[0]}
+                    </Text>
+                  </View>
+                )}
+              </View>
               <View style={styles.bookInfo}>
                 <Text style={styles.bookTitle}>{item.title}</Text>
-                <Text style={styles.bookAuthor}>By {item.author}</Text>
-                <Text style={styles.genre}>{item.genre}</Text>
-                <TouchableOpacity style={styles.detailsButton}>
-                  <Text style={styles.detailsButtonText}>View Details</Text>
+                <Text style={styles.bookAuthor}>by {item.author}</Text>
+                <Text style={styles.bookGenre}>{item.genre}</Text>
+                <Text style={styles.bookDescription}>
+                  {item.description?.substring(0, 100)}...
+                </Text>
+                <TouchableOpacity
+                  style={styles.viewButton}
+                  onPress={() =>
+                    navigation.navigate('BookDetails', {
+                      bookId: item.book_id,
+                    })
+                  }
+                >
+                  <Text style={styles.viewButtonText}>View Details</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
-          contentContainerStyle={styles.bookList}
+          contentContainerStyle={styles.booksGrid}
         />
       </View>
-    </ScreenBackground>
+    </ImageBackground>
   );
 };
 
-export default LibraryPage;
+export default Library;

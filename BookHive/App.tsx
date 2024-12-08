@@ -14,6 +14,7 @@ import HomePage from './src/components/HomePage/HomePage';
 import SignupForm from './src/components/SignUpForm/SignUpForm';
 import LibraryPage from './src/components/LibraryPage/LibraryPage';
 import FavoritesPage from './src/components/Favorites/FavoritesPage';
+import BookDetails from './src/components/DetailsPage/BookDetails';
 
 // Custom Header Component
 const CustomHeader = ({ navigation }: { navigation: any }) => {
@@ -142,6 +143,11 @@ const App = () => {
           name="FavoritesPage"
           component={FavoritesPage}
           options={{ title: 'Favorites' }} 
+        />
+          <Stack.Screen
+          name="BookDetails"
+          component={BookDetails}
+          options={{ title: 'Book Details' }} 
         />
       </Stack.Navigator>
     </NavigationContainer>

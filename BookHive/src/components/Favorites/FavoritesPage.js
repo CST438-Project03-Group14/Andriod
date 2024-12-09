@@ -9,7 +9,6 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './FavoritesPageStyles';
 
@@ -50,6 +49,7 @@ const Favorites = ({ navigation }) => {
   const fetchFavorites = async () => {
     try {
       setLoading(true);
+
       let url = `https://bookhive-90e4e8826675.herokuapp.com/api/users/${user.user_id}/favorites/`;
 
       if (activeStatus !== 'ALL') {
@@ -95,44 +95,42 @@ const Favorites = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../BackgroundImage/Library.jpg')} // Path to your background image
+      source={require('../BackgroundImage/Library.jpg')}
       style={styles.backgroundImage}
     >
       <View style={styles.contentContainer}>
-        <Text style={styles.title}>My Reading List</Text>
-
-        {/* Status Filters */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.statusFilters}
-        >
-          {Object.entries(readingStatuses).map(([status, label]) => (
-            <TouchableOpacity
-              key={status}
-              style={[
-                styles.filterButton,
-                activeStatus === status && styles.activeFilterButton,
-              ]}
-              onPress={() => setActiveStatus(status)}
-            >
-              <Text
+        <View style={styles.header}>
+          <Text style={styles.title}>My Favorites</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.genreButtonsContainer}
+          >
+            {Object.entries(readingStatuses).map(([status, label]) => (
+              <TouchableOpacity
+                key={status}
                 style={[
-                  styles.filterButtonText,
-                  activeStatus === status && styles.activeFilterButtonText,
+                  styles.genreButton,
+                  activeStatus === status && styles.activeGenreButton,
                 ]}
+                onPress={() => setActiveStatus(status)}
               >
-                {label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                <Text
+                  style={[
+                    styles.genreButtonText,
+                    activeStatus === status && styles.activeGenreButtonText,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-        {/* Favorites List */}
         <FlatList
           data={favorites}
           keyExtractor={(item) => item.favorite_id.toString()}
-          contentContainerStyle={styles.booksGrid}
           renderItem={({ item }) => (
             <View style={styles.bookCard}>
               <View style={styles.bookCover}>
@@ -142,7 +140,11 @@ const Favorites = ({ navigation }) => {
                     style={styles.coverImage}
                   />
                 ) : (
-                  <FontAwesome name="book" size={40} color="#2b86e2" />
+                  <View style={styles.defaultCover}>
+                    <Text style={styles.defaultCoverText}>
+                      {item.book_details.title[0]}
+                    </Text>
+                  </View>
                 )}
               </View>
               <View style={styles.bookInfo}>
@@ -151,9 +153,23 @@ const Favorites = ({ navigation }) => {
                   by {item.book_details.author}
                 </Text>
                 <Text style={styles.bookGenre}>{item.book_details.genre}</Text>
+                <Text style={styles.bookDescription}>
+                  {item.book_details.description?.substring(0, 100)}...
+                </Text>
+                <TouchableOpacity
+                  style={styles.viewButton}
+                  onPress={() =>
+                    navigation.navigate('BookDetails', {
+                      bookId: item.book_details.book_id,
+                    })
+                  }
+                >
+                  <Text style={styles.viewButtonText}>View Details</Text>
+                </TouchableOpacity>
               </View>
             </View>
           )}
+          contentContainerStyle={styles.booksGrid}
         />
       </View>
     </ImageBackground>

@@ -19,8 +19,108 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
   },
-  scrollContent: {
+  header: {
+    marginBottom: 20,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2b86e2',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  genreButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 10,
+  },
+  genreButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderWidth: 2,
+    borderColor: '#2b86e2',
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    marginRight: 8,
+  },
+  genreButtonText: {
+    color: '#2b86e2',
+    fontWeight: 'bold',
+  },
+  activeGenreButton: {
+    backgroundColor: '#E6F3FF',
+    borderColor: '#2b86e2',
+  },
+  booksGrid: {
     paddingBottom: 16,
+  },
+  bookCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  bookCover: {
+    height: 150,
+    backgroundColor: '#eee',
+  },
+  coverImage: {
+    width: '100%',
+    height: '100%',
+  },
+  defaultCover: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#2b86e2',
+  },
+  defaultCoverText: {
+    fontSize: 36,
+    color: '#FFF',
+  },
+  bookInfo: {
+    padding: 12,
+  },
+  bookTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  bookAuthor: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  bookGenre: {
+    fontSize: 12,
+    color: '#2b86e2',
+    marginBottom: 8,
+  },
+  bookDescription: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  viewButton: {
+    backgroundColor: '#2b86e2',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  viewButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
   },
   loadingContainer: {
     flex: 1,
@@ -36,123 +136,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#FF0000',
     textAlign: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#2b86e2',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  statusFilters: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-  },
-  filterButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#2b86e2',
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 4,
-  },
-  filterButtonText: {
-    color: '#2b86e2',
-    fontWeight: '600',
-  },
-  activeFilterButton: {
-    backgroundColor: '#2b86e2',
-  },
-  activeFilterButtonText: {
-    color: '#FFFFFF',
-  },
-  booksGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  bookCard: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: 16,
-    width: '48%',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  bookCover: {
-    width: '100%',
-    height: 150,
-    backgroundColor: '#EEE',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  coverImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  bookInfo: {
-    padding: 12,
-  },
-  bookTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  bookAuthor: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 4,
-  },
-  bookGenre: {
-    fontSize: 12,
-    color: '#2b86e2',
-    marginBottom: 8,
-  },
-  cardActions: {
-    flexDirection: 'row',
-    marginTop: 8,
-  },
-  viewButton: {
-    flex: 1,
-    backgroundColor: '#2b86e2',
-    padding: 10,
-    borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8,
-  },
-  viewButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  removeButton: {
-    flex: 1,
-    backgroundColor: '#FF4444',
-    padding: 10,
-    borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  removeButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-  picker: {
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    marginVertical: 8,
-    paddingHorizontal: 8,
   },
 });
 

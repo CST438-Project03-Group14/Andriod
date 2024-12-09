@@ -16,9 +16,14 @@ const HomePage = ({ navigation }) => {
         const userData = await AsyncStorage.getItem('user');
         if (userData) {
           setUser(JSON.parse(userData));
+        } else {
+          setError('You must log in to access this page.');
+          setLoading(false);
         }
       } catch (err) {
         console.error('Failed to load user data:', err);
+        setError('An error occured while fetching user data.');
+        setLoading(false);
       }
     };
 
@@ -58,11 +63,19 @@ const HomePage = ({ navigation }) => {
   if (error) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error: {error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
+        {!user && (
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.loginButtonText}>Go to Login</Text>
+          </TouchableOpacity>
+        )}
       </View>
     );
   }
-
+  
   return (
     <ImageBackground
       source={require('../BackgroundImage/Library.jpg')} 

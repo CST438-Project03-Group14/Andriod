@@ -1,85 +1,116 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import styles from './LoginFormStyles'; // Import styles
-import ScreenBackground from '../BackgroundImage/ScreenBackground'; // Import the background
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from 'react-native';
+import styles from './LoginFormStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-const LoginForm = () => {
+const LoginForm = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigation = useNavigation();
 
-  // Mock credentials
-  const mockUsers = [
-    { email: 'test@test.com', password: 'test123' }
-  ];
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill out all fields.');
+      return;
+    }
 
-  const handleLogin = () => {
-    const user = mockUsers.find(
-      user => user.email === email && user.password === password
-    );
+    try {
+      const response = await fetch(
+        'https://bookhive-90e4e8826675.herokuapp.com/api/users/login/',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
-    if (user) {
-      setError('');
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.message || 'Login failed. Please try again.');
+        return;
+      }
+
+      const data = await response.json();
+
+      // Save user data to AsyncStorage
+      await AsyncStorage.setItem(
+        'user',
+        JSON.stringify({
+          user_id: data.user.user_id,
+          username: data.user.username,
+          is_librarian: data.user.is_librarian,
+          email: data.user.email,
+        })
+      );
+
+      // Navigate to the HomePage
       navigation.navigate('HomePage');
-    } else {
-      setError('Invalid credentials. Try one of these test accounts:');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An error occurred. Please try again later.');
     }
   };
 
   return (
-    <ScreenBackground>
+    <ImageBackground
+      source={require('../BackgroundImage/Library.jpg')}
+      style={styles.backgroundImage}
+    >
       <View style={styles.wrapper}>
-        <Text style={styles.title}>Login</Text>
-        <View style={styles.inputBox}>
-          <Text style={styles.iconPlaceholder}>📧</Text> {/* Replace envelope icon with emoji */}
+        <View style={styles.brandSection}>
+          <Text style={styles.brandIcon}>📘</Text>
+          <Text style={styles.brandTitle}>BookHive</Text>
+          <Text style={styles.brandTagline}>Your Digital Library Companion</Text>
+        </View>
+
+        <View style={styles.loginSection}>
+          <Text style={styles.loginTitle}>Welcome Back</Text>
+          <Text style={styles.loginMessage}>Sign in to continue to your library</Text>
+
           <TextInput
             style={styles.input}
-            placeholder="Enter Email"
-            placeholderTextColor={styles.placeholderTextColor.color}
+            placeholder="Email"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
           />
-        </View>
-        <View style={styles.inputBox}>
-          <Text style={styles.iconPlaceholder}>🔒</Text> {/* Replace lock icon with emoji */}
           <TextInput
             style={styles.input}
-            placeholder="Enter Password"
-            placeholderTextColor={styles.placeholderTextColor.color}
+            placeholder="Password"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
           />
-        </View>
-        {error && (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-            {mockUsers.map((user, index) => (
-              <Text key={index} style={styles.testCredentials}>
-                Email: {user.email} | Password: {user.password}
-              </Text>
-            ))}
+
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Sign In</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('SignupForm')}>
+            <Text style={styles.loginButtonText}>Create Account!</Text>
+          </TouchableOpacity>
+
+
+          <View style={styles.termsSection}>
+            <Text style={styles.termsText}>By signing in, you agree to our</Text>
+            <View style={styles.termsLinks}>
+              <Text style={styles.link}>Terms of Service</Text>
+              <Text> and </Text>
+              <Text style={styles.link}>Privacy Policy</Text>
+            </View>
           </View>
-        )}
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <View style={styles.registerLink}>
-          <Text style={styles.registerLink}>
-            Don't have an account?{' '}
-            <Text style={styles.linkText} onPress={() => navigation.navigate('SignupForm')}>
-              Sign up
-            </Text>
-          </Text>
         </View>
       </View>
-    </ScreenBackground>
-
+    </ImageBackground>
   );
 };
 

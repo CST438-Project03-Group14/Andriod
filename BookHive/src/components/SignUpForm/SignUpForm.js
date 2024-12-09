@@ -1,104 +1,140 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import styles from './SignUpFormStyles'; // Import styles
-import ScreenBackground from '../BackgroundImage/ScreenBackground'; // Import the background
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ImageBackground,
+} from 'react-native';
 
-const SignupForm = () => {
-  const [email, setEmail] = useState(''); 
+import styles from './SignUpFormStyles';
+
+const SignupForm = ({ navigation }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
-  const [focusedInput, setFocusedInput] = useState(null); // Track which input is focused
-  const navigation = useNavigation();
 
-  const handleSubmit = () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async () => {
+    if (!username || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'All fields are required.');
       return;
     }
 
-    setError('');
-    navigation.navigate('Login'); // Navigate back to the Login screen
+    if (!isValidEmail(email)) {
+      Alert.alert('Error', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await fetch('https://bookhive-90e4e8826675.herokuapp.com/api/users/signup/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        Alert.alert('Error', data.message || 'Signup failed. Please try again.');
+        return;
+      }
+
+      Alert.alert('Success', 'Account created successfully!');
+      navigation.navigate('Login'); // Navigate to Login after successful signup
+    } catch (error) {
+      console.error('Signup error:', error);
+      Alert.alert('Error', 'An error occurred. Please try again later.');
+    }
   };
 
   return (
-    <ScreenBackground>
+    <ImageBackground
+      source={require('../BackgroundImage/Library.jpg')}
+      style={styles.backgroundImage}
+    >
       <View style={styles.wrapper}>
-        <Text style={styles.title}>Create Account</Text>
+        <View style={styles.brandSection}>
+          <Text style={styles.brandIcon}>📘</Text>
+          <Text style={styles.brandTitle}>BookHive</Text>
+          <Text style={styles.brandTagline}>Your Digital Library Companion</Text>
+        </View>
 
-        {/* Email Input */}
-        <View style={styles.inputBox}>
+        <View style={styles.signupSection}>
+          <Text style={styles.signupTitle}>Create Account</Text>
+          <Text style={styles.signupMessage}>Sign up to start your journey</Text>
+
           <TextInput
-            style={[
-              styles.input,
-              focusedInput === 'email' && styles.inputFocus,
-            ]}
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#666"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            style={styles.input}
             placeholder="Email"
-            placeholderTextColor={styles.placeholderTextColor.color}
+            placeholderTextColor="#666"
             value={email}
             onChangeText={setEmail}
-            onFocus={() => setFocusedInput('email')}
-            onBlur={() => setFocusedInput(null)}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
-          <Text style={styles.icon}>📧</Text>
-        </View>
-
-        {/* Password Input */}
-        <View style={styles.inputBox}>
           <TextInput
-            style={[
-              styles.input,
-              focusedInput === 'password' && styles.inputFocus,
-            ]}
+            style={styles.input}
             placeholder="Password"
-            placeholderTextColor={styles.placeholderTextColor.color}
-            secureTextEntry
+            placeholderTextColor="#666"
             value={password}
             onChangeText={setPassword}
-            onFocus={() => setFocusedInput('password')}
-            onBlur={() => setFocusedInput(null)}
-          />
-          <Text style={styles.icon}>🔒</Text>
-        </View>
-
-        {/* Confirm Password Input */}
-        <View style={styles.inputBox}>
-          <TextInput
-            style={[
-              styles.input,
-              focusedInput === 'confirmPassword' && styles.inputFocus,
-            ]}
-            placeholder="Confirm Password"
-            placeholderTextColor={styles.placeholderTextColor.color}
             secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#666"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
-            onFocus={() => setFocusedInput('confirmPassword')}
-            onBlur={() => setFocusedInput(null)}
+            secureTextEntry
           />
-          <Text style={styles.icon}>🔒</Text>
+
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+
+          <TouchableOpacity style={styles.signupButton} onPress={handleSubmit}>
+            <Text style={styles.signupButtonText}>Sign Up</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.signupButton}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.signupButtonText}>Back to Login</Text>
+          </TouchableOpacity>
+
+          <View style={styles.termsSection}>
+            <Text style={styles.termsText}>By signing up, you agree to our</Text>
+            <View style={styles.termsLinks}>
+              <Text style={styles.link}>Terms of Service</Text>
+              <Text> and </Text>
+              <Text style={styles.link}>Privacy Policy</Text>
+            </View>
+          </View>
         </View>
-
-        {/* Error Message */}
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-
-        {/* Buttons */}
-        <TouchableOpacity
-          onPress={handleSubmit}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Create Account</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Login')}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Back to Login</Text>
-        </TouchableOpacity>
       </View>
-    </ScreenBackground>
+    </ImageBackground>
   );
 };
 

@@ -1,105 +1,93 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    width: 420, 
-    backgroundColor: 'transparent',
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    borderWidth: 2,
-    borderRadius: 12, 
-    paddingVertical: 30,
-    paddingHorizontal: 40,
-    alignItems: 'center',
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15, 
-    margin: 10,
   },
-  title: {
-    fontSize: 28, 
-    fontWeight: '700',
-    marginBottom: 25,
-    textAlign: 'center',
+  wrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 255)',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    padding: 20,
+  },
+  brandSection: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  brandIcon: {
+    fontSize: 48,
+  },
+  brandTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
     color: '#2b86e2',
-    letterSpacing: 1,
   },
-  inputBox: {
-    position: 'relative',
+  brandTagline: {
+    fontSize: 16,
+    color: '#666',
+  },
+  loginSection: {
     width: '100%',
-    marginVertical: 20,
+    alignItems: 'center',
+  },
+  loginTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2b86e2',
+    marginBottom: 8,
+  },
+  loginMessage: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 16,
   },
   input: {
     width: '100%',
     height: 50,
-    backgroundColor: 'transparent',
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    borderWidth: 2,
-    borderRadius: 40,
-    color: 'rgb(255, 255, 255)', // White text
-    paddingHorizontal: 15,
-    fontSize: 16,
-    shadowColor: 'rgba(79, 115, 241, 0.6)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.0, 
-    transition: 'border-color 0.3s ease, box-shadow 0.3s ease', 
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 12,
   },
-  placeholderTextColor: {
-    color: 'rgba(255, 255, 255, 0.7)', // Semi-transparent white
-  },
-  iconPlaceholder: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-    transform: [{ translateY: -12 }],
-    fontSize: 18,
-    color: '#0b0b0b',
-  },
-  button: {
+  loginButton: {
     width: '100%',
-    height: 45,
-    backgroundColor: '#4f73f1',
-    borderRadius: 40,
+    backgroundColor: '#2b86e2',
+    paddingVertical: 12,
+    borderRadius: 8,
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    marginTop: 10,
-    transition: 'background-color 0.3s ease', 
+    marginBottom: 16,
   },
-  buttonText: {
-    color: 'rgb(18, 16, 16)',
-    fontWeight: '700',
-    fontSize: 16,
+  loginButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
-  registerLink: {
-    fontSize: 14,
+  error: {
+    color: '#FF0000',
+    marginBottom: 16,
     textAlign: 'center',
-    color: '#ffff',
+  },
+  termsSection: {
+    alignItems: 'center',
     marginTop: 20,
   },
-  linkText: {
-    color: 'rgb(255, 255, 255)',
-    fontWeight: '600',
-    textDecorationLine: 'underline', 
+  termsText: {
+    fontSize: 12,
+    color: '#666',
   },
-  errorContainer: {
-    backgroundColor: '#f8d7da',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    width: '100%',
+  termsLinks: {
+    flexDirection: 'row',
+    marginTop: 5,
   },
-  errorText: {
-    color: '#721c24',
-    marginBottom: 5,
-  },
-  testCredentials: {
-    color: '#721c24',
-    fontSize: 14,
+  link: {
+    color: '#2b86e2',
+    textDecorationLine: 'underline',
   },
 });
 

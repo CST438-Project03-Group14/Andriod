@@ -1,125 +1,163 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import styles from './FavoritesPageStyles'; // Import styles
-import { useNavigation } from '@react-navigation/native';
-import ScreenBackground from '../BackgroundImage/ScreenBackground'; // Import the background
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from './FavoritesPageStyles';
 
-const FavoritesPage = () => {
-  const navigation = useNavigation(); 
-  const [favorites, setFavorites] = useState([
-    {
-      id: 1,
-      title: 'The Great Gatsby',
-      author: 'F. Scott Fitzgerald',
-      genre: 'Classic',
-      dateAdded: '2024-01-15',
-      notes: 'Beautiful prose, fascinating characters'
-    },
-    {
-      id: 2,
-      title: '1984',
-      author: 'George Orwell',
-      genre: 'Science Fiction',
-      dateAdded: '2024-02-01',
-      notes: 'Dystopian masterpiece'
-    },
-    {
-      id: 3,
-      title: 'Pride and Prejudice',
-      author: 'Jane Austen',
-      genre: 'Romance',
-      dateAdded: '2024-02-15',
-      notes: 'Witty and charming'
+const Favorites = ({ navigation }) => {
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeStatus, setActiveStatus] = useState('ALL');
+  const [user, setUser] = useState(null);
+
+  const readingStatuses = {
+    ALL: 'All Books',
+    WANT_TO_READ: 'Want to Read',
+    CURRENTLY_READING: 'Currently Reading',
+    ALREADY_READ: 'Already Read',
+  };
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      } else {
+        setError('You must log in to access this page.');
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchFavorites();
     }
-  ]);
+  }, [user, activeStatus]);
 
-  const removeFromFavorites = (id) => {
-    setFavorites(favorites.filter(book => book.id !== id));
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true);
+      let url = `https://bookhive-90e4e8826675.herokuapp.com/api/users/${user.user_id}/favorites/`;
+
+      if (activeStatus !== 'ALL') {
+        url = `https://bookhive-90e4e8826675.herokuapp.com/api/users/${user.user_id}/reading/${activeStatus}/`;
+      }
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch favorites');
+
+      const data = await response.json();
+      setFavorites(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const updateNotes = (id, newNotes) => {
-    setFavorites(favorites.map(book =>
-      book.id === id ? { ...book, notes: newNotes } : book
-    ));
-  };
-
-  const getMostCommonGenre = () => {
-    const genreCount = {};
-    favorites.forEach(book => {
-      genreCount[book.genre] = (genreCount[book.genre] || 0) + 1;
-    });
-    return Object.keys(genreCount).reduce((a, b) =>
-      genreCount[a] > genreCount[b] ? a : b,
-      ''
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2b86e2" />
+        <Text>Loading...</Text>
+      </View>
     );
-  };
+  }
 
-  const recentlyAdded = () =>
-    favorites.length > 0 ? favorites[favorites.length - 1].title : 'None';
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        {!user && (
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.loginButtonText}>Go to Login</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
 
   return (
-    <ScreenBackground>
-      <ScrollView contentContainerStyle={styles.wrapper}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>My Favorites</Text>
-          <TouchableOpacity
-            style={styles.backButton}
-            text={styles.backButtonText}
-            onPress={() => navigation.navigate('HomePage')}
-          >
-            <Text style={styles.backButtonText}>Back to Home</Text>
-          </TouchableOpacity>
-        </View>
+    <ImageBackground
+      source={require('../BackgroundImage/Library.jpg')} // Path to your background image
+      style={styles.backgroundImage}
+    >
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>My Reading List</Text>
 
-        {/* Stats Section */}
-        <View style={styles.statsSection}>
-          <View style={styles.stat}>
-            <Text style={styles.statTitle}>Total Favorites</Text>
-            <Text style={styles.statValue}>{favorites.length}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statTitle}>Most Common Genre</Text>
-            <Text style={styles.statValue}>{getMostCommonGenre()}</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statTitle}>Recently Added</Text>
-            <Text style={styles.statValue}>{recentlyAdded()}</Text>
-          </View>
-        </View>
+        {/* Status Filters */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.statusFilters}
+        >
+          {Object.entries(readingStatuses).map(([status, label]) => (
+            <TouchableOpacity
+              key={status}
+              style={[
+                styles.filterButton,
+                activeStatus === status && styles.activeFilterButton,
+              ]}
+              onPress={() => setActiveStatus(status)}
+            >
+              <Text
+                style={[
+                  styles.filterButtonText,
+                  activeStatus === status && styles.activeFilterButtonText,
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         {/* Favorites List */}
-        {favorites.map(book => (
-          <View key={book.id} style={styles.favoriteCard}>
-            <View style={styles.bookInfo}>
-              <Text style={styles.bookTitle}>{book.title}</Text>
-              <Text style={styles.bookAuthor}>By {book.author}</Text>
-              <Text style={styles.genre}>{book.genre}</Text>
-              <Text style={styles.dateAdded}>Added on: {book.dateAdded}</Text>
-              <TextInput
-                style={styles.notesArea}
-                value={book.notes}
-                onChangeText={(text) => updateNotes(book.id, text)}
-                placeholder="Add your notes..."
-                multiline
-              />
-              <View style={styles.cardActions}>
-                <TouchableOpacity
-                  style={styles.removeButton}
-                  onPress={() => removeFromFavorites(book.id)}
-                >
-                  <Text style={styles.removeButtonText}>Remove</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.readButton}>
-                  <Text style={styles.readButtonText}>Start Reading</Text>
-                </TouchableOpacity>
+        <FlatList
+          data={favorites}
+          keyExtractor={(item) => item.favorite_id.toString()}
+          contentContainerStyle={styles.booksGrid}
+          renderItem={({ item }) => (
+            <View style={styles.bookCard}>
+              <View style={styles.bookCover}>
+                {item.book_details.cover_image ? (
+                  <Image
+                    source={{ uri: item.book_details.cover_image }}
+                    style={styles.coverImage}
+                  />
+                ) : (
+                  <FontAwesome name="book" size={40} color="#2b86e2" />
+                )}
+              </View>
+              <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle}>{item.book_details.title}</Text>
+                <Text style={styles.bookAuthor}>
+                  by {item.book_details.author}
+                </Text>
+                <Text style={styles.bookGenre}>{item.book_details.genre}</Text>
               </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
-    </ScreenBackground>
+          )}
+        />
+      </View>
+    </ImageBackground>
   );
 };
 
-export default FavoritesPage;
+export default Favorites;

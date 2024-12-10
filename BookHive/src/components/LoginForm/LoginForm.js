@@ -11,12 +11,13 @@ import styles from './LoginFormStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginForm = ({ navigation }) => {
-  const [username, setUsername] = useState(''); 
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!username || !email || !password) {
       Alert.alert('Error', 'Please fill out all fields.');
       return;
     }
@@ -27,7 +28,7 @@ const LoginForm = ({ navigation }) => {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }), 
+          body: JSON.stringify({ username, email, password }), 
         }
       );
 
@@ -39,15 +40,19 @@ const LoginForm = ({ navigation }) => {
 
       const data = await response.json();
 
+      // Save user data to AsyncStorage
       await AsyncStorage.setItem(
         'user',
         JSON.stringify({
           user_id: data.user.user_id,
           username: data.user.username,
+          email: data.user.email,
           is_librarian: data.user.is_librarian,
         })
       );
 
+      // Navigate to the HomePage
+      Alert.alert('Success', 'Login successful!');
       navigation.navigate('HomePage');
     } catch (error) {
       console.error('Login error:', error);
@@ -73,9 +78,17 @@ const LoginForm = ({ navigation }) => {
 
           <TextInput
             style={styles.input}
-            placeholder="Username" 
+            placeholder="Username"
             value={username}
-            onChangeText={setUsername} 
+            onChangeText={setUsername}
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
             autoCapitalize="none"
           />
           <TextInput

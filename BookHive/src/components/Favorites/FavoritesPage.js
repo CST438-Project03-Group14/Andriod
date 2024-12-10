@@ -60,6 +60,7 @@ const Favorites = ({ navigation }) => {
       if (!response.ok) throw new Error('Failed to fetch favorites');
 
       const data = await response.json();
+      // console.log(data);
       setFavorites(data);
     } catch (err) {
       setError(err.message);
@@ -160,7 +161,7 @@ const Favorites = ({ navigation }) => {
                   style={styles.viewButton}
                   onPress={() =>
                     navigation.navigate('BookDetails', {
-                      bookId: item.book_details.book_id,
+                      bookId: item.book_id,
                     })
                   }
                 >

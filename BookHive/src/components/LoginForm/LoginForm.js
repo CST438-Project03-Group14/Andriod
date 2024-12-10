@@ -11,12 +11,12 @@ import styles from './LoginFormStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginForm = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!username || !password) {
       Alert.alert('Error', 'Please fill out all fields.');
       return;
     }
@@ -27,7 +27,7 @@ const LoginForm = ({ navigation }) => {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ username, password }), 
         }
       );
 
@@ -39,18 +39,15 @@ const LoginForm = ({ navigation }) => {
 
       const data = await response.json();
 
-      // Save user data to AsyncStorage
       await AsyncStorage.setItem(
         'user',
         JSON.stringify({
           user_id: data.user.user_id,
           username: data.user.username,
           is_librarian: data.user.is_librarian,
-          email: data.user.email,
         })
       );
 
-      // Navigate to the HomePage
       navigation.navigate('HomePage');
     } catch (error) {
       console.error('Login error:', error);
@@ -76,10 +73,9 @@ const LoginForm = ({ navigation }) => {
 
           <TextInput
             style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
+            placeholder="Username" 
+            value={username}
+            onChangeText={setUsername} 
             autoCapitalize="none"
           />
           <TextInput
@@ -98,7 +94,6 @@ const LoginForm = ({ navigation }) => {
           <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('SignupForm')}>
             <Text style={styles.loginButtonText}>Create Account!</Text>
           </TouchableOpacity>
-
 
           <View style={styles.termsSection}>
             <Text style={styles.termsText}>By signing in, you agree to our</Text>
